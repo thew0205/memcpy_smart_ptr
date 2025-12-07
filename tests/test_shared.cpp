@@ -1,5 +1,8 @@
 #include "CppUTest/TestHarness.h"
-#include "memcpy_smart_pointer.h"
+#include "memcpy_shared_pointer.h"
+
+#include <string>
+#include <cstring>
 
 TEST_GROUP(MEMCPY_SHARED_PRR){};
 
