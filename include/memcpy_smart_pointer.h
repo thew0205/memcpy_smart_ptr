@@ -64,10 +64,10 @@ public:
     }
 
     template <typename _Function>
-    constexpr static bool is_memcpy_send_signature = std::is_invocable_r_v<bool, _Function, void *, memcpy_unique_ptr<T> *>;
+    constexpr static bool is_memcpy_send_signature = std::is_invocable_r_v<bool, _Function, void *const, const memcpy_unique_ptr<T> *const>;
 
     template <typename _Function>
-    typename std::enable_if<is_memcpy_send_signature<_Function>, bool>::type memcpy_send(void *dest, _Function copy_fn_src)
+    typename std::enable_if<is_memcpy_send_signature<_Function>, bool>::type memcpy_send(void *const dest, _Function copy_fn_src)
     {
         bool success = false;
         if (copy_fn_src(dest, this))
@@ -79,10 +79,10 @@ public:
     }
 
     template <typename _Function>
-    constexpr static bool is_memcpy_receive_signature = std::is_invocable_r_v<bool, _Function, memcpy_unique_ptr<T> *,
-                                                                              void *>;
+    constexpr static bool is_memcpy_receive_signature = std::is_invocable_r_v<bool, _Function, memcpy_unique_ptr<T> *const,
+                                                                              const void *const>;
     template <typename _Function>
-    typename std::enable_if<is_memcpy_receive_signature<_Function>, bool>::type memcpy_receive(void *src, _Function copy_fn_dest)
+    typename std::enable_if<is_memcpy_receive_signature<_Function>, bool>::type memcpy_receive(const void *const src, _Function copy_fn_dest)
     {
         delete ptr;
         return (copy_fn_dest(this, src));
@@ -281,10 +281,10 @@ public:
     }
 
     template <typename _Function>
-    constexpr static bool is_memcpy_send_signature = std::is_invocable_r_v<bool, _Function, void *, memcpy_shared_ptr<T> *>;
+    constexpr static bool is_memcpy_send_signature = std::is_invocable_r_v<bool, _Function, void *const, const memcpy_shared_ptr<T> *const>;
 
     template <typename _Function>
-    typename std::enable_if<is_memcpy_send_signature<_Function>, bool>::type memcpy_send(void *dest, _Function copy_fn)
+    typename std::enable_if<is_memcpy_send_signature<_Function>, bool>::type memcpy_send(void *const dest, _Function copy_fn)
     {
 
         bool success = false;
@@ -301,10 +301,10 @@ public:
     }
 
     template <typename _Function>
-    constexpr static bool is_memcpy_receive_signature = std::is_invocable_r_v<bool, _Function, memcpy_shared_ptr<T> *, void *>;
+    constexpr static bool is_memcpy_receive_signature = std::is_invocable_r_v<bool, _Function, memcpy_shared_ptr<T> *const, const void *const>;
 
     template <typename _Function>
-    typename std::enable_if<is_memcpy_receive_signature<_Function>, bool>::type memcpy_receive(void *src, _Function copy_fn)
+    typename std::enable_if<is_memcpy_receive_signature<_Function>, bool>::type memcpy_receive(const void *const src, _Function copy_fn)
     {
         if (nullptr != refCount.count)
         {
@@ -327,7 +327,7 @@ public:
 
 private:
     T *ptr = nullptr;
-    
+
     void __cleanup__()
     {
         if (refCount.count != nullptr)

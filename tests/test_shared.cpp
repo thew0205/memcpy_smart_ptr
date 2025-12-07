@@ -161,12 +161,11 @@ TEST(MEMCPY_SHARED_PRR, Memcpy_SEND_function)
 {
     memcpy_shared_ptr<int> ptr1{new int(60)};
     uint8_t buffer[sizeof(memcpy_shared_ptr<int>)];
-    bool copied = ptr1.memcpy_send(buffer, [](void *dest, memcpy_shared_ptr<int> *src)
+    bool copied = ptr1.memcpy_send(buffer, [](void *const dest, const memcpy_shared_ptr<int> *src)
                                    { return memcpy(dest, src, sizeof(memcpy_shared_ptr<int>)); });
     CHECK(copied);
     LONGS_EQUAL(2, ptr1.get_count());
     LONGS_EQUAL(60, *ptr1.get());
-
 
     ptr1.refCount.count->decrement(); // Manually decrement to avoid double free in test
 }
@@ -176,14 +175,14 @@ TEST(MEMCPY_SHARED_PRR, Memcpy_receive_function)
     memcpy_shared_ptr<int> ptr1{new int(70)};
     uint8_t buffer[sizeof(memcpy_shared_ptr<int>)];
 
-    bool sent = ptr1.memcpy_send(buffer, [](void *dest, memcpy_shared_ptr<int> *src)
+    bool sent = ptr1.memcpy_send(buffer, [](void *const dest, const memcpy_shared_ptr<int> *src)
                                  { return memcpy(dest, src, sizeof(memcpy_shared_ptr<int>)); });
     CHECK(sent);
     LONGS_EQUAL(2, ptr1.get_count());
     LONGS_EQUAL(70, *ptr1.get());
 
     memcpy_shared_ptr<int> ptr2;
-    bool received = ptr2.memcpy_receive(buffer, [](memcpy_shared_ptr<int> *dest, void *src)
+    bool received = ptr2.memcpy_receive(buffer, [](memcpy_shared_ptr<int> *dest, const void *const src)
                                         { return memcpy(dest, src, sizeof(memcpy_shared_ptr<int>)); });
     CHECK(received);
     LONGS_EQUAL(2, ptr1.get_count());
@@ -191,7 +190,6 @@ TEST(MEMCPY_SHARED_PRR, Memcpy_receive_function)
 
     LONGS_EQUAL(2, ptr2.get_count());
     LONGS_EQUAL(70, *ptr2.get());
-
 }
 
 TEST(MEMCPY_SHARED_PRR, Memcpy_receive_function2)
@@ -199,14 +197,14 @@ TEST(MEMCPY_SHARED_PRR, Memcpy_receive_function2)
     memcpy_shared_ptr<int> ptr1{new int(70)};
     uint8_t buffer[sizeof(memcpy_shared_ptr<int>)];
 
-    bool sent = ptr1.memcpy_send(buffer, [](void *dest, memcpy_shared_ptr<int> *src)
+    bool sent = ptr1.memcpy_send(buffer, [](void *const dest, const memcpy_shared_ptr<int> *src)
                                  { return memcpy(dest, src, sizeof(memcpy_shared_ptr<int>)); });
     CHECK(sent);
     LONGS_EQUAL(2, ptr1.get_count());
     LONGS_EQUAL(70, *ptr1.get());
 
     memcpy_shared_ptr<int> ptr2(new int(100));
-    bool received = ptr2.memcpy_receive(buffer, [](memcpy_shared_ptr<int> *dest, void *src)
+    bool received = ptr2.memcpy_receive(buffer, [](memcpy_shared_ptr<int> *dest, const void *const src)
                                         { return memcpy(dest, src, sizeof(memcpy_shared_ptr<int>)); });
     CHECK(received);
     LONGS_EQUAL(2, ptr1.get_count());
@@ -216,14 +214,14 @@ TEST(MEMCPY_SHARED_PRR, Memcpy_receive_function2)
     LONGS_EQUAL(70, *ptr2.get());
 }
 
-
 TEST_GROUP(MAKE_MEMCPY_SHARED_PTR){};
 
-TEST(MAKE_MEMCPY_SHARED_PTR, MAKE_SHARED_PTR_INT){
-    memcpy_shared_ptr<int> ptr= make_memcpy_shared_ptr<int>(6);
+TEST(MAKE_MEMCPY_SHARED_PTR, MAKE_SHARED_PTR_INT)
+{
+    memcpy_shared_ptr<int> ptr = make_memcpy_shared_ptr<int>(6);
 }
 
-
-TEST(MAKE_MEMCPY_SHARED_PTR, MAKE_SHARED_PTR_STRING){
-    memcpy_shared_ptr<std::string> ptr= make_memcpy_shared_ptr<std::string>("This is Tolulope Matthew Busoye");
+TEST(MAKE_MEMCPY_SHARED_PTR, MAKE_SHARED_PTR_STRING)
+{
+    memcpy_shared_ptr<std::string> ptr = make_memcpy_shared_ptr<std::string>("This is Tolulope Matthew Busoye");
 }
