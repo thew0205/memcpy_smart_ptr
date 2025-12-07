@@ -11,42 +11,44 @@ add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME} INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+option(MEMCPY_SMART_PTR_TESTS "Build memcpy smart pointer test codes" OFF)
+
+if(MEMCPY_SMART_PTR_TESTS)
+
+    include(FetchContent)
+
+    FetchContent_Declare(
+        CppUTest
+        GIT_REPOSITORY https://github.com/cpputest/cpputest.git
+        GIT_TAG v4.0
+    )
+
+    FetchContent_MakeAvailable(CppUTest)
+    # add_subdirectory(cpputest)
+
+    target_compile_definitions(CppUTest PUBLIC CPPUTEST_USE_MEM_LEAK_DETECTION)
+    add_executable(tests
+        tests/test_unique.cpp
+        tests/test_shared.cpp
+        tests/test_main.cpp
+    )
 
 
 
-include(FetchContent)
 
-FetchContent_Declare(
-    CppUTest
-    GIT_REPOSITORY https://github.com/cpputest/cpputest.git
-    GIT_TAG v4.0
-)
+    target_compile_options(tests PUBLIC -fsanitize=address)
+    target_link_options(tests PUBLIC -fsanitize=address)
+    target_compile_definitions(tests PRIVATE
 
-FetchContent_MakeAvailable(CppUTest)
-# add_subdirectory(cpputest)
-
-target_compile_definitions(CppUTest PUBLIC CPPUTEST_USE_MEM_LEAK_DETECTION)
-add_executable(tests
-    tests/test_unique.cpp
-    tests/test_shared.cpp
-    tests/test_main.cpp
-)
+    )
 
 
 
-
-target_compile_options(tests PUBLIC -fsanitize=address)
-target_link_options(tests PUBLIC -fsanitize=address)
-target_compile_definitions(tests PRIVATE
-
-)
-
-
-
-target_link_libraries(tests PRIVATE
-    memcpy_smart_ptr
-    CppUTest
-    CppUTestExt
-)
+    target_link_libraries(tests PRIVATE
+        memcpy_smart_ptr
+        CppUTest
+        CppUTestExt
+    )
+endif(MEMCPY_SMART_PTR_TESTS)
 
 
