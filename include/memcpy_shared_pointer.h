@@ -1,4 +1,4 @@
-#include <type_traits> 
+#include <type_traits>
 
 class memcpy_shared_ptr_count
 {
@@ -189,15 +189,18 @@ public:
     template <typename _Function>
     typename std::enable_if<is_memcpy_receive_signature<_Function>, bool>::type memcpy_receive(const void *const src, _Function copy_fn)
     {
-        if (nullptr != refCount.count)
-        {
-            refCount.count->decrement(); // if the pointer is not null, increment the refCount
-        }
-        __cleanup__();
+
+        uint8_t buffer[sizeof(memcpy_shared_ptr<T>)];
         bool success = false;
-        if (copy_fn(this, src))
+        if (copy_fn(reinterpret_cast<memcpy_shared_ptr<T> *>(buffer), src))
         {
 
+            if (nullptr != refCount.count)
+            {
+                refCount.count->decrement(); // if the pointer is not null, increment the refCount
+            }
+            __cleanup__();
+            memcpy(this, buffer, sizeof(memcpy_shared_ptr<T>));
             success = true;
         }
         return success;
