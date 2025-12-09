@@ -27,7 +27,7 @@ if(MEMCPY_SMART_PTR_TESTS)
     # add_subdirectory(cpputest)
 
     target_compile_definitions(CppUTest PUBLIC CPPUTEST_USE_MEM_LEAK_DETECTION)
-    add_executable(tests
+    add_executable(memcpy_smart_ptr_tests
         tests/test_unique.cpp
         tests/test_shared.cpp
         tests/test_main.cpp
@@ -36,15 +36,15 @@ if(MEMCPY_SMART_PTR_TESTS)
 
 
 
-    target_compile_options(tests PUBLIC -fsanitize=address)
-    target_link_options(tests PUBLIC -fsanitize=address)
-    target_compile_definitions(tests PRIVATE
+    target_compile_options(memcpy_smart_ptr_tests PUBLIC -fsanitize=address)
+    target_link_options(memcpy_smart_ptr_tests PUBLIC -fsanitize=address)
+    target_compile_definitions(memcpy_smart_ptr_tests PRIVATE
 
     )
 
 
 
-    target_link_libraries(tests PRIVATE
+    target_link_libraries(memcpy_smart_ptr_tests PRIVATE
         memcpy_smart_ptr
         CppUTest
         CppUTestExt
