@@ -160,20 +160,8 @@ TEST(MEMCPY_SHARED_PRR, MOVE_ASSIGNMENT_sharedPtr2)
     LONGS_EQUAL(8, *ptr1.get());
 }
 
-TEST(MEMCPY_SHARED_PRR, Memcpy_SEND_function)
-{
-    memcpy_shared_ptr<int> ptr1{new int(60)};
-    uint8_t buffer[sizeof(memcpy_shared_ptr<int>)];
-    bool copied = ptr1.memcpy_send(buffer, [](void *const dest, const memcpy_shared_ptr<int> *src)
-                                   { return memcpy(dest, src, sizeof(memcpy_shared_ptr<int>)); });
-    CHECK(copied);
-    LONGS_EQUAL(2, ptr1.get_count());
-    LONGS_EQUAL(60, *ptr1.get());
 
-    ptr1.refCount.count->decrement(); // Manually decrement to avoid double free in test
-}
-
-TEST(MEMCPY_SHARED_PRR, Memcpy_receive_function)
+TEST(MEMCPY_SHARED_PRR, Memcpy_send_receive_function)
 {
     memcpy_shared_ptr<int> ptr1{new int(70)};
     uint8_t buffer[sizeof(memcpy_shared_ptr<int>)];
